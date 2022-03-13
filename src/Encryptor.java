@@ -1,3 +1,7 @@
+import java.sql.SQLOutput;
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class Encryptor
 {
     /** A two-dimensional array of single-character strings, instantiated in the constructor */
@@ -126,31 +130,69 @@ public class Encryptor
      */
     public String decryptMessage(String encryptedMessage)
     {
-
         String decryptedMessage = "";
         while(encryptedMessage != "")
         {
             int count = 0;
-            for(int col = 0; col < letterBlock[0].length; col++)
+            String[][] arr = new String[numRows][numCols];
+            if(encryptedMessage.length() > numCols * numRows)
             {
-                for(int row = 0; row < letterBlock.length; row++)
+                for(int c = 0; c < arr[0].length; c++)
                 {
-                    letterBlock[row][col] = encryptedMessage.substring(encryptedMessage.length() - numRows * numCols + count,encryptedMessage.length() - numRows * numCols + count + 1);
-                    count++;
-                }
-                count = 0;
-            }
-            for(int r = 0; r < letterBlock.length; r++)
-            {
-                for(int c = 0; c < letterBlock[r].length; c++)
-                {
-                    if(letterBlock[r][c] != "A")
+                    for(int r = 0; r < arr.length; r++)
                     {
-                        decryptedMessage = letterBlock[r][c] + decryptedMessage;
+                        arr[r][c] = encryptedMessage.substring(count, count + 1);
+                        count++;
+                    }
+                }
+                for(int row = 0; row < arr.length; row++)
+                {
+                    for(int col = 0; col < arr[row].length; col++)
+                    {
+                        decryptedMessage += arr[row][col];
                     }
                 }
             }
-            encryptedMessage = encryptedMessage.substring(0, encryptedMessage.length() - numRows * numCols);
+            else
+            {
+                for(int c = 0; c < arr[0].length; c++)
+                {
+                    for(int r = 0; r < arr.length; r++)
+                    {
+                        arr[r][c] = encryptedMessage.substring(count, count + 1);
+                        count++;
+                    }
+                }
+                for(int r = arr.length - 1; r >= 0; r--)
+                {
+                    for(int c = arr[r].length - 1; c >= 0; c--)
+                    {
+                        if(arr[r][c].equals("A"))
+                        {
+                            arr[r][c] = null;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                }
+                for(int r2 = 0; r2 < arr.length; r2++)
+                {
+                    for(int c2 = 0; c2 < arr[r2].length; c2++)
+                    {
+                        if(arr[r2][c2] == null)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            decryptedMessage += arr[r2][c2];
+                        }
+                    }
+                }
+            }
+            encryptedMessage = encryptedMessage.substring(numRows * numCols);
         }
         return decryptedMessage;
     }
